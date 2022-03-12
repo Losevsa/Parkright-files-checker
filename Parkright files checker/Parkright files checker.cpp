@@ -23,6 +23,11 @@ int main()
         std::cout << "ini файл не найден" << std::endl;
         std::cout << "Файл создан в папке с прогой" << std::endl;
         inifile.close();
+        std::ofstream WriteIni("pr_check.ini");
+        WriteIni << "PRDir=C:\\Program Files\\Recognition Technologies\\ParkRight 3.8" << std::endl;
+        WriteIni << "DirToCopy=C:\\PR\\new" << std::endl;
+        WriteIni << "FolderTxt=C:\\PR\\txt" << std::endl;
+
         system("pause");
         return -1;
     }
@@ -48,24 +53,42 @@ int main()
             FolderTxt = Parseini(FolderTxt, temp);
         }
     }
-    
-
+    std::cout << "Дирректория ParkRight: " << PRDir << std::endl;
+    std::cout << "Дирректория сборки ParkRight: " << DirToCopy << std::endl;
+    std::cout << "Дирректория где хранятся txt с именами файлов: " << FolderTxt << std::endl;
     //выбираем что надо сделать
-    int action;
-    std::cout << "1. Создать список папки со списком файлов, рядом с этой прогой (в ini должен быть заполнен PRDir). " << std::endl;
-    std::cout << "2. Скопировать файлы в папки, которые прописаны в txt файле (Копировать будем в DirToCopy)" << std::endl;
-
-    std::cin >> action;
-
-    if (action == 1)
+    while (true)
     {
-        CreateFiles(PRDir, FolderTxt);
+        
+        int action;
+        std::cout << "0. Для выхода" << std::endl;
+        std::cout << "1. Создать список папки со списком файлов, рядом с этой прогой (в ini должен быть заполнен PRDir). " << std::endl;
+        std::cout << "2. Скопировать файлы в папки, которые прописаны в txt файле (Копировать будем в DirToCopy)" << std::endl;
+
+
+        std::cin >> action;
+
+        system("cls");
+
+        if (action == 1)
+        {
+            std::cout << "Создали txt со списком файлов" << std::endl;
+            CreateFiles(PRDir, FolderTxt);
+        }
+        else if (action == 2)
+        {   
+            CreateFolders(DirToCopy);
+            std::cout << "Создали папки, если их нет" << std::endl;
+            CopyFiles(DirToCopy, PRDir, FolderTxt);
+            std::cout << "Все файлы скопированы" << std::endl;
+
+        }
+        else if (action == 0)
+        {
+            break;
+        }
     }
-    else if (action == 2)
-    {   
-        CreateFolders(DirToCopy);
-        CopyFiles(DirToCopy, PRDir, FolderTxt);
-    }
+   
 }
 
 std::string del(std::string p)
@@ -81,7 +104,7 @@ std::string del(std::string p)
     
     p = "";
 
-    for (int i = temp.length(); i >= 0; i--)
+    for (int i = temp.length() -1 ; i >= 0; i--)
     {
         p += temp[i];
     }
@@ -243,19 +266,48 @@ void CopyFiles(std::string PathToCopy, std::string PathToPR, std::string PathToT
     std::ifstream BinTxt(PathToTxt + "\\Bin.txt");
 
     while (std::getline(BinTxt, FileName))
-    {   
-
-            CopyPR = PathToPR + "\\Bin\\";
-            for (int i = 0; i < FileName.length(); i++)
-            {
-                CopyPR += FileName[i];
-            }
+    {
+            CopyPR = PathToPR + "\\Bin\\" + FileName;
             CopyTo = PathToCopy + "\\Bin\\" + FileName;
             std::filesystem::copy_file(CopyPR, CopyTo);
-
-
     }
 
-    
+    BinTxt.close();
+
+    //Data
+    std::ifstream DataTxt(PathToTxt + "\\Data.txt");
+
+    while (std::getline(DataTxt, FileName))
+    {
+        CopyPR = PathToPR + "\\Data\\" + FileName;
+        CopyTo = PathToCopy + "\\Data\\" + FileName;
+        std::filesystem::copy_file(CopyPR, CopyTo);
+    }
+
+    DataTxt.close();
+
+    //LocKeys RUS
+    std::ifstream RussianTxt(PathToTxt + "\\Russian.txt");
+
+    while (std::getline(RussianTxt, FileName))
+    {
+        CopyPR = PathToPR + "\\LocKeys\\Russian\\" + FileName;
+        CopyTo = PathToCopy + "\\LocKeys\\Russian\\" + FileName;
+        std::filesystem::copy_file(CopyPR, CopyTo);
+    }
+
+    RussianTxt.close();
+
+    //LocKeys Eng
+    std::ifstream EnglishTxt(PathToTxt + "\\English.txt");
+
+    while (std::getline(EnglishTxt, FileName))
+    {
+        CopyPR = PathToPR + "\\LocKeys\\English\\" + FileName;
+        CopyTo = PathToCopy + "\\LocKeys\\English\\" + FileName;
+        std::filesystem::copy_file(CopyPR, CopyTo);
+    }
+
+    EnglishTxt.close();
 
 }
