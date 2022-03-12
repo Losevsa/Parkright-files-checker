@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <string>
 
 std::string del(std::string p);
 std::string Parseini(std::string param, std::string t);
