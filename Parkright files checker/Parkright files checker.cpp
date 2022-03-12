@@ -7,7 +7,7 @@ std::string del(std::string p);
 std::string Parseini(std::string param, std::string temp);
 void CreateFolders(std::string path);
 void CreateFiles(std::string path, std::string PathToMakeTxt);
-void CopyFiles(std::string path);
+void CopyFiles(std::string PathToCopy, std::string PathToPR, std::string PathToTxt);
 
 
 int main()
@@ -59,14 +59,12 @@ int main()
 
     if (action == 1)
     {
-        //создаем папки
-        CreateFolders(FolderTxt);
         CreateFiles(PRDir, FolderTxt);
     }
     else if (action == 2)
     {   
         CreateFolders(DirToCopy);
-        CopyFiles(DirToCopy);
+        CopyFiles(DirToCopy, PRDir, FolderTxt);
     }
 }
 
@@ -144,12 +142,11 @@ void CreateFiles(std::string path,std::string PathToMakeTxt)
     std::string temp;
     std::string RemovePathTemp;
     
-   
-
+  
     //создаем для Bin
 
-    std::ofstream binTemp("D://BinTemp.txt");
-    std::ofstream bin(PathToMakeTxt + "//Bin//Bin.txt");
+    std::ofstream binTemp("C://BinTemp.txt");
+    std::ofstream bin(PathToMakeTxt + "//Bin.txt");
 
     for (auto& p : std::filesystem::directory_iterator(path + "\\Bin"))
     {
@@ -157,7 +154,7 @@ void CreateFiles(std::string path,std::string PathToMakeTxt)
     }
 
     binTemp.close();
-    std::ifstream ReadBinTemp("D://BinTemp.txt");
+    std::ifstream ReadBinTemp("C://BinTemp.txt");
 
     while (std::getline(ReadBinTemp, temp))
     {
@@ -169,8 +166,8 @@ void CreateFiles(std::string path,std::string PathToMakeTxt)
 
     //создаем для Data
 
-    std::ofstream DataTemp("D://DataTemp.txt");
-    std::ofstream Data(PathToMakeTxt + "//Data//Data.txt");
+    std::ofstream DataTemp("C://DataTemp.txt");
+    std::ofstream Data(PathToMakeTxt + "//Data.txt");
 
     for (auto& p : std::filesystem::directory_iterator(path + "\\Data"))
     {
@@ -179,7 +176,7 @@ void CreateFiles(std::string path,std::string PathToMakeTxt)
 
     DataTemp.close();
 
-    std::ifstream ReadDataTemp("D://DataTemp.txt");
+    std::ifstream ReadDataTemp("C://DataTemp.txt");
 
     while (std::getline(ReadDataTemp, temp))
     {
@@ -191,8 +188,8 @@ void CreateFiles(std::string path,std::string PathToMakeTxt)
 
     //Russian Local
 
-    std::ofstream RussianTemp("D://RussianTemp.txt");
-    std::ofstream Russian(PathToMakeTxt + "//LocKeys//Russian//Russian.txt");
+    std::ofstream RussianTemp("C://RussianTemp.txt");
+    std::ofstream Russian(PathToMakeTxt + "//Russian.txt");
 
     for (auto& p : std::filesystem::directory_iterator(path + "\\LocKeys\\Russian"))
     {
@@ -200,7 +197,7 @@ void CreateFiles(std::string path,std::string PathToMakeTxt)
     }
 
     RussianTemp.close();
-    std::ifstream ReadRussianTemp("D://RussianTemp.txt");
+    std::ifstream ReadRussianTemp("C://RussianTemp.txt");
 
     while (std::getline(ReadRussianTemp, temp))
     {
@@ -213,8 +210,8 @@ void CreateFiles(std::string path,std::string PathToMakeTxt)
 
     //English Local
 
-    std::ofstream EnglishTemp("D://EnglishTemp.txt");
-    std::ofstream English(PathToMakeTxt + "//LocKeys//English//English.txt");
+    std::ofstream EnglishTemp("C://EnglishTemp.txt");
+    std::ofstream English(PathToMakeTxt + "//English.txt");
 
     for (auto& p : std::filesystem::directory_iterator(path + "\\LocKeys\\English"))
     {
@@ -222,7 +219,7 @@ void CreateFiles(std::string path,std::string PathToMakeTxt)
     }
 
     EnglishTemp.close();
-    std::ifstream ReadEnglishTemp("D://EnglishTemp.txt");
+    std::ifstream ReadEnglishTemp("C://EnglishTemp.txt");
 
     while (std::getline(ReadEnglishTemp, temp))
     {
@@ -232,14 +229,33 @@ void CreateFiles(std::string path,std::string PathToMakeTxt)
 
     ReadEnglishTemp.close();
 
-    remove("D://BinTemp.txt");
-    remove("D://DataTemp.txt");
-    remove("D://RussianTemp.txt");
-    remove("D://EnglishTemp.txt");
+    remove("C://BinTemp.txt");
+    remove("C://DataTemp.txt");
+    remove("C://RussianTemp.txt");
+    remove("C://EnglishTemp.txt");
 
 }
 
-void CopyFiles(std::string path)
-{
-    std::filesystem::copy_file
+void CopyFiles(std::string PathToCopy, std::string PathToPR, std::string PathToTxt)
+{   
+    //Копируем bin
+    std::string CopyPR, CopyTo, FileName;
+    std::ifstream BinTxt(PathToTxt + "\\Bin.txt");
+
+    while (std::getline(BinTxt, FileName))
+    {   
+
+            CopyPR = PathToPR + "\\Bin\\";
+            for (int i = 0; i < FileName.length(); i++)
+            {
+                CopyPR += FileName[i];
+            }
+            CopyTo = PathToCopy + "\\Bin\\" + FileName;
+            std::filesystem::copy_file(CopyPR, CopyTo);
+
+
+    }
+
+    
+
 }
