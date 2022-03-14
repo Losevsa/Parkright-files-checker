@@ -80,7 +80,7 @@ int main()
             CreateFolders(DirToCopy);
             std::cout << "Создали папки, если их нет" << std::endl;
             CopyFiles(DirToCopy, PRDir, FolderTxt);
-            std::cout << "Все файлы скопированы" << std::endl;
+            std::cout << "Копирование завершено" << std::endl;
 
         }
         else if (action == 0)
@@ -263,51 +263,94 @@ void CopyFiles(std::string PathToCopy, std::string PathToPR, std::string PathToT
 {   
     //Копируем bin
     std::string CopyPR, CopyTo, FileName;
+
     std::ifstream BinTxt(PathToTxt + "\\Bin.txt");
 
-    while (std::getline(BinTxt, FileName))
-    {
-            CopyPR = PathToPR + "\\Bin\\" + FileName;
-            CopyTo = PathToCopy + "\\Bin\\" + FileName;
-            std::filesystem::copy_file(CopyPR, CopyTo);
-    }
+    while (true) {
+        try {
 
-    BinTxt.close();
+
+            while (std::getline(BinTxt, FileName))
+            {
+                CopyPR = PathToPR + "\\Bin\\" + FileName;
+                CopyTo = PathToCopy + "\\Bin\\" + FileName;
+                std::filesystem::copy_file(CopyPR, CopyTo);
+            }
+
+            BinTxt.close();
+            break;
+        }
+        catch (...)
+        {
+            std::cout << "Проблема с копированием файла: " << CopyPR << std::endl;
+        }
+    }
+    
+
 
     //Data
     std::ifstream DataTxt(PathToTxt + "\\Data.txt");
 
-    while (std::getline(DataTxt, FileName))
-    {
-        CopyPR = PathToPR + "\\Data\\" + FileName;
-        CopyTo = PathToCopy + "\\Data\\" + FileName;
-        std::filesystem::copy_file(CopyPR, CopyTo);
-    }
+    while (true) {
+        try {
 
-    DataTxt.close();
+            while (std::getline(DataTxt, FileName))
+            {
+                CopyPR = PathToPR + "\\Data\\" + FileName;
+                CopyTo = PathToCopy + "\\Data\\" + FileName;
+                std::filesystem::copy_file(CopyPR, CopyTo);
+            }
+
+            DataTxt.close();
+
+            break;
+        }
+        catch (...)
+        {
+            std::cout << "Проблема с копированием файла: " << CopyPR << std::endl;
+        }
+    }
 
     //LocKeys RUS
     std::ifstream RussianTxt(PathToTxt + "\\Russian.txt");
 
-    while (std::getline(RussianTxt, FileName))
-    {
-        CopyPR = PathToPR + "\\LocKeys\\Russian\\" + FileName;
-        CopyTo = PathToCopy + "\\LocKeys\\Russian\\" + FileName;
-        std::filesystem::copy_file(CopyPR, CopyTo);
-    }
+    while (true) {
+        try {
+            while (std::getline(RussianTxt, FileName))
+            {
+                CopyPR = PathToPR + "\\LocKeys\\Russian\\" + FileName;
+                CopyTo = PathToCopy + "\\LocKeys\\Russian\\" + FileName;
+                std::filesystem::copy_file(CopyPR, CopyTo);
+            }
 
-    RussianTxt.close();
+            RussianTxt.close();
+            break;
+        }
+        catch (...)
+        {
+            std::cout << "Проблема с копированием файла: " << CopyPR << std::endl;
+        }
+    }
 
     //LocKeys Eng
     std::ifstream EnglishTxt(PathToTxt + "\\English.txt");
 
-    while (std::getline(EnglishTxt, FileName))
-    {
-        CopyPR = PathToPR + "\\LocKeys\\English\\" + FileName;
-        CopyTo = PathToCopy + "\\LocKeys\\English\\" + FileName;
-        std::filesystem::copy_file(CopyPR, CopyTo);
-    }
+    while (true) {
+        try {
+            while (std::getline(EnglishTxt, FileName))
+            {
+                CopyPR = PathToPR + "\\LocKeys\\English\\" + FileName;
+                CopyTo = PathToCopy + "\\LocKeys\\English\\" + FileName;
+                std::filesystem::copy_file(CopyPR, CopyTo);
+            }
 
-    EnglishTxt.close();
+            EnglishTxt.close();
+            break;
+        }
+        catch (...)
+        {
+            std::cout << "Проблема с копированием файла: " << CopyPR << std::endl;
+        }
+    }
 
 }
