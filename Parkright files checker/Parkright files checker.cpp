@@ -8,6 +8,7 @@ std::string Parseini(std::string param, std::string temp);
 void CreateFolders(std::string path);
 void CreateFiles(std::string path, std::string PathToMakeTxt);
 void CopyFiles(std::string PathToCopy, std::string PathToPR, std::string PathToTxt);
+void CopyFiles(std::string PathToCopy, std::string PathToPR, std::string PathToTxt, int a);
 
 
 int main()
@@ -27,6 +28,8 @@ int main()
         WriteIni << "PRDir=C:\\Program Files\\Recognition Technologies\\ParkRight 3.8" << std::endl;
         WriteIni << "DirToCopy=C:\\PR\\new" << std::endl;
         WriteIni << "FolderTxt=C:\\PR\\txt" << std::endl;
+        WriteIni << "SVNDir=C:\\SNV" << std::endl;
+        WriteIni << "SVNCopyDir=C:\\PR\\Svn" << std::endl;
 
         system("pause");
         return -1;
@@ -35,6 +38,8 @@ int main()
     std::string PRDir = "PRDir";
     std::string DirToCopy = "DirToCopy";
     std::string FolderTxt = "FolderTxt";
+    std::string SVNDir = "SVNDir";
+    std::string SVNCopyDir = "SVNCopyDir";
     std::string temp;
 
     //парсим инишник и присваиваем всем переменным значения
@@ -52,19 +57,30 @@ int main()
         {
             FolderTxt = Parseini(FolderTxt, temp);
         }
+        if (SVNDir == "SVNDir")
+        {
+            SVNDir = Parseini(SVNDir, temp);
+        }
+        if (SVNCopyDir == "SVNCopyDir")
+        {
+            SVNCopyDir = Parseini(SVNCopyDir, temp);
+        }
     }
     std::cout << "Дирректория ParkRight: " << PRDir << std::endl;
     std::cout << "Дирректория сборки ParkRight: " << DirToCopy << std::endl;
     std::cout << "Дирректория где хранятся txt с именами файлов: " << FolderTxt << std::endl;
+    std::cout << "Svn: " << SVNDir << std::endl;
+    std::cout << "Дир до файлов из snv: " << SVNCopyDir << std::endl;
+
     //выбираем что надо сделать
     while (true)
     {
         
         int action;
         std::cout << "0. Для выхода" << std::endl;
-        std::cout << "1. Создать список папки со списком файлов, рядом с этой прогой (в ini должен быть заполнен PRDir). " << std::endl;
-        std::cout << "2. Скопировать файлы в папки, которые прописаны в txt файле (Копировать будем в DirToCopy)" << std::endl;
-
+        std::cout << "1. Создать список папки со списком файлов, рядом с этой прогой (PRDir - папка с ПР, FolderTxt - папка где создадутся txt). " << std::endl;
+        std::cout << "2. Скопировать файлы в папки, которые прописаны в txt файле (DirToCopy)" << std::endl;
+        std::cout << "3. Скопировать файлы из хранилища (SVNDir)" << std::endl;
 
         std::cin >> action;
 
@@ -81,6 +97,14 @@ int main()
             std::cout << "Создали папки, если их нет" << std::endl;
             CopyFiles(DirToCopy, PRDir, FolderTxt);
             std::cout << "Копирование завершено" << std::endl;
+
+        }
+        else if (action == 3)
+        {
+            CreateFolders(SVNCopyDir);
+            std::cout << "Создали папки, если их нет" << std::endl;
+            CopyFiles(SVNCopyDir, SVNDir, FolderTxt,1);
+
 
         }
         else if (action == 0)
@@ -282,12 +306,10 @@ void CopyFiles(std::string PathToCopy, std::string PathToPR, std::string PathToT
         }
         catch (...)
         {
-            std::cout << "Проблема с копированием файла: " << CopyPR << std::endl;
+            std::cout << "Нет файла: " << CopyPR << std::endl;
         }
     }
     
-
-
     //Data
     std::ifstream DataTxt(PathToTxt + "\\Data.txt");
 
@@ -307,7 +329,7 @@ void CopyFiles(std::string PathToCopy, std::string PathToPR, std::string PathToT
         }
         catch (...)
         {
-            std::cout << "Проблема с копированием файла: " << CopyPR << std::endl;
+            std::cout << "Нет файла: " << CopyPR << std::endl;
         }
     }
 
@@ -328,7 +350,7 @@ void CopyFiles(std::string PathToCopy, std::string PathToPR, std::string PathToT
         }
         catch (...)
         {
-            std::cout << "Проблема с копированием файла: " << CopyPR << std::endl;
+            std::cout << "Нет файла: " << CopyPR << std::endl;
         }
     }
 
@@ -349,8 +371,101 @@ void CopyFiles(std::string PathToCopy, std::string PathToPR, std::string PathToT
         }
         catch (...)
         {
-            std::cout << "Проблема с копированием файла: " << CopyPR << std::endl;
+            std::cout << "Нет файла: " << CopyPR << std::endl;
+        }
+    }
+}
+
+void CopyFiles(std::string PathToCopy, std::string PathToPR, std::string PathToTxt, int a)
+{
+
+    //Копируем bin
+    std::string CopyPR, CopyTo, FileName;
+
+    std::ifstream BinTxt(PathToTxt + "\\Bin.txt");
+
+    while (true) {
+        try {
+
+
+            while (std::getline(BinTxt, FileName))
+            {
+                CopyPR = PathToPR + "\\Bin64\\" + FileName;
+                CopyTo = PathToCopy + "\\Bin\\" + FileName;
+                std::filesystem::copy_file(CopyPR, CopyTo);
+            }
+
+            BinTxt.close();
+            break;
+        }
+        catch (...)
+        {
+            std::cout << "Нет файла: " << CopyPR << std::endl;
         }
     }
 
+    //Data
+    std::ifstream DataTxt(PathToTxt + "\\Data.txt");
+
+    while (true) {
+        try {
+
+            while (std::getline(DataTxt, FileName))
+            {
+                CopyPR = PathToPR + "\\Data\\" + FileName;
+                CopyTo = PathToCopy + "\\Data\\" + FileName;
+                std::filesystem::copy_file(CopyPR, CopyTo);
+            }
+
+            DataTxt.close();
+
+            break;
+        }
+        catch (...)
+        {
+            std::cout << "Нет файла: " << CopyPR << std::endl;
+        }
+    }
+
+    //LocKeys RUS
+    std::ifstream RussianTxt(PathToTxt + "\\Russian.txt");
+
+    while (true) {
+        try {
+            while (std::getline(RussianTxt, FileName))
+            {
+                CopyPR = PathToPR + "\\LocKeys\\Russian\\" + FileName;
+                CopyTo = PathToCopy + "\\LocKeys\\Russian\\" + FileName;
+                std::filesystem::copy_file(CopyPR, CopyTo);
+            }
+
+            RussianTxt.close();
+            break;
+        }
+        catch (...)
+        {
+            std::cout << "Нет файла: " << CopyPR << std::endl;
+        }
+    }
+
+    //LocKeys Eng
+    std::ifstream EnglishTxt(PathToTxt + "\\English.txt");
+
+    while (true) {
+        try {
+            while (std::getline(EnglishTxt, FileName))
+            {
+                CopyPR = PathToPR + "\\LocKeys\\English\\" + FileName;
+                CopyTo = PathToCopy + "\\LocKeys\\English\\" + FileName;
+                std::filesystem::copy_file(CopyPR, CopyTo);
+            }
+
+            EnglishTxt.close();
+            break;
+        }
+        catch (...)
+        {
+            std::cout << "Нет файла: " << CopyPR << std::endl;
+        }
+    }
 }
